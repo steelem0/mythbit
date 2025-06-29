@@ -24,7 +24,7 @@ export async function sendToMCP(userInput, log) {
   const aiResponse = await useGroq(messages)
 
   const text = aiResponse?.narrative.trim() || '[No response]'
-  log.value.push({ from: 'system', text })
+
 
   return {
     narrative: text,

@@ -10,7 +10,7 @@
 
     <section class="my-10 bg-gray-800 p-6 rounded-lg shadow">
       <GameLog  :entries="log" />
-      <ActionInput :options="['Explore', 'Talk to the innkeeper', 'Leave tavern']" @submit="handleAction" />
+      <ActionInput :options="options" @submit="handleAction" />
     </section>
   </div>
 </template>
@@ -40,15 +40,18 @@ onMounted(() => {
  
 
 async function handleAction(input) {
-    log.value.push({ from: 'player', text: input })
+  log.value.push({ from: 'player', text: input })
 
-    const { narrative, options: nextOptions } = await sendToMCP(input, log)
-    log.value.push({ from: 'system', text: narrative })
+  const { narrative, nextOptions } = await sendToMCP(input, log)
 
-    options.value = nextOptions
+  log.value.push({ from: 'system', text: narrative })
 
-    console.log(options)
+  options.value = nextOptions || [] // fallback to empty array if undefined
 }
+watch(options, (val) => {
+  console.log('Updated options:', val)
+})
+
 
 </script>
 

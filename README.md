@@ -1,44 +1,45 @@
-# 🧙 Mythbit
+# 🐉 Mythbit
 
-**Mythbit** is a playful, AI-guided fantasy micro-RPG built with Nuxt 3, Vue, PrimeVue, and Groq’s lightning-fast LLMs. Players create a character using real Dungeons & Dragons 5e data and embark on an interactive, text-based journey narrated by AI.
-
-![Mythbit Banner](./public/banner.png) <!-- Optional: insert banner or logo -->
+Mythbit is a lightweight, interactive fantasy game powered by the D&D 5e API and Groq LLM, built using Nuxt, Vue 3, and PrimeVue. Players choose a race and class, then interact with an AI Dungeon Master for a narrative-driven experience—all in the browser.
 
 ---
 
-## 🪄 Features
+## 🚀 Features
 
-- 🎲 **Class & Race Selection** — Choose your character from live D&D API data
-- 🧠 **AI-Powered Narration** — Modular Components and Prompting (MCP) generate immersive, branching storylines
-- 💬 **Interactive Story** — Player actions influence the world through a responsive chat interface
-- 🐾 **Lexi Cameo** — Meet our Creative Director: Lexi the dog! Every line of dialogue is “paw-approved”
-
----
-
-## ⚙️ Stack
-
-- **Nuxt 3** (Vue 3 + Vite)
-- **PrimeVue** (UI components)
-- **Tailwind CSS** (styling)
-- **Groq** (LLM chat completions)
-- **D&D 5e API** (open source D&D content)
-- **MCP** (Modular Components and Prompting)
-- **Pinia & VueUse** (state + utilities)
+- 🎭 Choose your D&D 5e class and race
+- 🧠 AI-generated story using Groq and MCP (Modular Components + Prompting)
+- 📚 Built-in D&D API integration for lore-rich data
+- 💬 Real-time game log
+- 🪄 Animated sprite system coming soon!
+- 🔒 API keys securely handled via Nuxt server routes
 
 ---
 
-## 🚀 Getting Started
+## 🧰 Tech Stack
 
-### Prerequisites
+- **Framework:** Nuxt 3 (Vue 3)
+- **UI:** PrimeVue + Tailwind CSS
+- **AI:** Groq LLM (Chat Completions API)
+- **Game Data:** [D&D 5e API](https://www.dnd5eapi.co)
+- **Prompt Engine:** Custom MCP design
+- **Hosting:** Compatible with SSR-capable platforms (e.g. Hostinger Premium, Vercel Pro)
 
-- Node.js 18+
-- Yarn or npm
-- Nuxt 3
+---
 
-### Setup
+## 🐾 Creative Director
 
-1. Clone the repo:
+Lexi, the 5-year-old Cane Corso, serves as our Creative Director. She puts her paw of approval on every scene and feature. If Lexi doesn't wag her tail—it's not shipping. 🐶💜
 
-```bash
-git clone https://github.com/yourusername/mythbit.git
-cd mythbit
+---
+
+
+---
+
+## 🔐 Notes
+This project uses Nuxt server routes to securely call Groq’s API, keeping your keys safe.
+
+Static site hosting alone is not supported due to server middleware requirements.
+
+--
+## 📜 License
+MIT
