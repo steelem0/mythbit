@@ -1,37 +1,58 @@
-export async function useGroq(messages) {
-  let data
+export async function useGroq(messages, retries = 95) {
   try {
-    data = await $fetch('/api/groq', {
+    const data = await $fetch('/api/groq', {
       method: 'POST',
+      timeout: 20000,
       body: {
         model: 'llama3-8b-8192',
         messages,
         temperature: 0.8
       }
     })
-  } catch (err) {
-    console.error('❌ API call to Groq failed:', err)
-    return { narrative: 'The gods are silent...', options: [] }
+
+    const content = data?.choices?.[0]?.message?.content
+
+    if (!content) {
+      console.warn('⚠️ No content returned from Groq, retrying...')
+      if (retries > 0) {
+        return await useGroq(messages, retries - 1)
+      }
+      return failedResponse()
+    }
+
+    let narrative = ''
+    let options = []
+
+    try {
+      const parsed = JSON.parse(content)
+      narrative = parsed.narrative
+      options = parsed.options
+    } catch (err) {
+      console.error('❌ Failed to parse Groq response:', err)
+      narrative = content || ''
+      if (!narrative && retries > 0) {
+        return await useGroq(messages, retries - 1)
+      }
+    }
+
+    // Still failed to produce narrative?
+    if (!narrative.trim()) {
+      return failedResponse()
+    }
+
+    return { narrative, options }
+  } catch (error) {
+    console.error('🔥 Groq request failed:', error)
+    if (retries > 0) {
+      return await useGroq(messages, retries - 1)
+    }
+    return failedResponse()
   }
+}
 
-  const content = data?.choices?.[0]?.message?.content
-
-  if (!content) {
-    console.warn('⚠️ No content returned from Groq')
-    return { narrative: 'An eerie silence fills the air...', options: [] }
+function failedResponse() {
+  return {
+    narrative: "The world stutters and goes dim, as if some greater force hesitates... our storyteller is moving slowly.. ",
+    options: ['Rouse the storyteller and try again']
   }
-
-  let narrative = ''
-  let options = []
-
-  try {
-    const parsed = JSON.parse(content)
-    narrative = parsed.narrative || 'The story continues...'
-    options = parsed.options || []
-  } catch (err) {
-    console.error('⚠️ Failed to parse JSON from Groq response. Raw content:', content)
-    narrative = content.trim()
-  }
-
-  return { narrative, options }
 }
