@@ -14,6 +14,12 @@
       <div class="mt-4">
         <PrimeButton label="Start Game" @click="startGame" />
       </div>
+      <PrimeInputText
+        v-model="playerName"
+        placeholder="Enter your name"
+        class="w-full md:w-1/2 mb-4"
+      />
+
     </section>
   </div>
 </template>
@@ -23,15 +29,17 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import PrimeDropdown from 'primevue/dropdown'
 import PrimeButton from 'primevue/button'
+import PrimeInputText from 'primevue/inputtext'
 import { useDndApi } from '@/composables/useDndApi'
 import { usePlayerState } from '@/composables/usePlayerState'
 
 const router = useRouter()
-const { setPlayer } = usePlayerState()
+const { player } = usePlayerState()
 
 const selectedClass = ref(null)
 const selectedRace = ref(null)
 const { classes, races, getClasses, getRaces } = useDndApi()
+const playerName = ref('')
 
 onMounted(() => {
   getClasses()
@@ -39,14 +47,14 @@ onMounted(() => {
 })
 
 function startGame() {
-  if (selectedClass.value && selectedRace.value) {
-    setPlayer({
-      class: selectedClass.value,
-      race: selectedRace.value
-    })
+  if (playerName.value && selectedClass.value && selectedRace.value) {
+    player.value.name = playerName.value
+    player.value.class = selectedClass.value
+    player.value.race = selectedRace.value
     router.push('/play')
   }
 }
+
 </script>
 
 <style scoped>

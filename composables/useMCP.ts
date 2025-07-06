@@ -1,33 +1,30 @@
-import { systemPrompt } from './mcpSystem'
 import { usePlayerState } from './usePlayerState'
+import { useStoryState } from './useStoryState'
 import { useGroq } from './useGroq'
+import { systemPrompt } from './mcpSystem'
 
-export async function sendToMCP(userInput, log) {
+export async function sendToMCP(userInput: string) {
   const { player } = usePlayerState()
+  const { narrative, options, storyLog, timeRemaining } = useStoryState()
 
-  const playerData = player?.value || {}
-
-  const playerClass = playerData.class?.name || 'Unknown Class'
-  const playerRace = playerData.race?.name || 'Unknown Race'
+  const playerRace = player.value.race?.name || 'Unknown Race'
+  const playerClass = player.value.class?.name || 'Unknown Class'
+  const playerName = player.value.name || 'Unnamed Hero'
 
   const memoryContext =
-    `You are guiding a ${playerRace} ${playerClass} through a fantasy world.\n\n` +
-    log.value
-      .map(entry => `${entry.from === 'player' ? 'Player' : 'System'}: ${entry.text}`)
-      .join('\n')
+    `You are guiding a ${playerRace} ${playerClass} through a fantasy world.\n` +
+    `There are ${Math.ceil(timeRemaining() / 1000)} seconds remaining.\n\n` +
+    storyLog.value.map(entry => `${entry.from === 'player' ? 'Player' : 'System'}: ${entry.text}`).join('\n')
 
-   const messages = [
+  const messages = [
     systemPrompt,
     { role: 'user', content: `${memoryContext}\nPlayer: ${userInput}` }
   ]
 
-  const aiResponse = await useGroq(messages)
+  const { narrative: responseText, options: nextOptions } = await useGroq(messages)
 
-  const text = aiResponse?.narrative.trim() || '[No response]'
-
-
-  return {
-    narrative: text,
-    nextOptions:  aiResponse?.options
-  }
+  narrative.value = responseText
+  options.value = nextOptions || []
+  storyLog.value.push({ from: 'player', text: userInput })
+  storyLog.value.push({ from: 'system', text: responseText })
 }

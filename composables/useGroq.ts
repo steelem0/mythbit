@@ -1,27 +1,37 @@
 export async function useGroq(messages) {
-    const data = await $fetch('/api/groq', {
-    method: 'POST',
-    body: {
+  let data
+  try {
+    data = await $fetch('/api/groq', {
+      method: 'POST',
+      body: {
         model: 'llama3-8b-8192',
         messages,
         temperature: 0.8
-    }
+      }
     })
+  } catch (err) {
+    console.error('❌ API call to Groq failed:', err)
+    return { narrative: 'The gods are silent...', options: [] }
+  }
 
-    let content = data.choices?.[0]?.message?.content
+  const content = data?.choices?.[0]?.message?.content
 
-    let narrative = ''
-    let options = []
+  if (!content) {
+    console.warn('⚠️ No content returned from Groq')
+    return { narrative: 'An eerie silence fills the air...', options: [] }
+  }
 
-    try {
+  let narrative = ''
+  let options = []
+
+  try {
     const parsed = JSON.parse(content)
-        narrative = parsed.narrative
-        options = parsed.options
-    } catch (err) {
-        console.error('Failed to parse Groq response:', err)
-        narrative = content || 'Something happened...'
-    }
+    narrative = parsed.narrative || 'The story continues...'
+    options = parsed.options || []
+  } catch (err) {
+    console.error('⚠️ Failed to parse JSON from Groq response. Raw content:', content)
+    narrative = content.trim()
+  }
 
-    return { narrative, options }
-
+  return { narrative, options }
 }

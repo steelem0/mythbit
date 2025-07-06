@@ -1,23 +1,25 @@
-// server/api/groq.ts
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig()
 
-  // ✅ Validate input shape
-  if (
-    !body ||
-    typeof body !== 'object' ||
-    !Array.isArray(body.messages) ||
-    !body.model
-  ) {
-    throw createError({
-      statusCode: 400,
-      message: 'Invalid request body: must include `model` and `messages` array.'
-    })
-  }
+  // Fetch D&D data
+  const [monsters, spells] = await Promise.all([
+    $fetch('https://www.dnd5eapi.co/api/monsters?limit=5'),
+    $fetch('https://www.dnd5eapi.co/api/spells?limit=5')
+  ])
 
-  // 🧠 Log the clean input
-  console.log('📦 Sending to Groq:\n', JSON.stringify(body, null, 2))
+  // Inject into system message
+  const dndContext = `
+You have access to the following monsters and spells from the D&D API.
+Monsters: ${monsters.results.map(m => m.name).join(', ')}
+Spells: ${spells.results.map(s => s.name).join(', ')}
+Use them creatively in a fantasy story.
+`
+
+  const modifiedMessages = [
+    { role: 'system', content: body.messages[0].content + '\n\n' + dndContext },
+    ...body.messages.slice(1)
+  ]
 
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -26,28 +28,12 @@ export default defineEventHandler(async (event) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: body.model,
-      messages: body.messages,
-      temperature: body.temperature ?? 0.8
+      model: 'llama3-8b-8192',
+      temperature: 0.8,
+      messages: modifiedMessages
     })
   })
 
-  // 🛑 Handle invalid JSON or Groq crashing
-  let data
-  try {
-    data = await res.json()
-  } catch {
-    const fallback = await res.text()
-    console.error('❌ Groq returned invalid JSON:', fallback)
-    throw createError({ statusCode: 500, message: fallback })
-  }
-
-  // 🚨 Groq rejected the request
-  if (!res.ok) {
-    console.error('❌ Groq API Error:', data)
-    throw createError({ statusCode: res.status, message: data?.error?.message || 'Groq request failed' })
-  }
-
-  // ✅ Success
+  const data = await res.json()
   return data
 })
