@@ -8,17 +8,20 @@
     <section class="bg-gray-800 p-6 rounded-lg shadow">
       <h3 class="text-lg font-semibold mb-4">Begin Your Adventure</h3>
       <div class="flex flex-col md:flex-row gap-4">
-        <PrimeDropdown v-model="selectedClass" :options="classes" optionLabel="name" placeholder="Select Class" class="w-full md:w-1/2" />
-        <PrimeDropdown v-model="selectedRace" :options="races" optionLabel="name" placeholder="Select Race" class="w-full md:w-1/2" />
+        <PrimeDropdown v-model="selectedClass" :options="classes" optionLabel="name" placeholder="Select Class" class="w-full md:w-1/2 mx-4" />
+        &nbsp;
+        <PrimeDropdown v-model="selectedRace" :options="races" optionLabel="name" placeholder="Select Race" class="w-full md:w-1/2 mx-4" />
+        &nbsp;
+         <PrimeButton label="Start Game" @click="startGame" />
       </div>
-      <div class="mt-4">
-        <PrimeButton label="Start Game" @click="startGame" />
-      </div>
-      <PrimeInputText
+      <div class="mt-4 w-full" style="margin-top: 10px;">
+        <PrimeInputText
         v-model="playerName"
         placeholder="Enter your name"
         class="w-full md:w-1/2 mb-4"
       />
+      </div>
+
 
     </section>
   </div>
@@ -30,7 +33,7 @@ import { useRouter } from 'vue-router'
 import PrimeDropdown from 'primevue/dropdown'
 import PrimeButton from 'primevue/button'
 import PrimeInputText from 'primevue/inputtext'
-import { useDndApi } from '@/composables/useDndApi'
+import { useDndApi } from '~/server/utils/useDndApi'
 import { usePlayerState } from '@/composables/usePlayerState'
 
 const router = useRouter()
