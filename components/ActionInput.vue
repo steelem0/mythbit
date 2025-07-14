@@ -1,18 +1,19 @@
 <template>
   <form @submit.prevent="submitAction" class="space-y-4">
-    <div class="flex gap-2 space-y-2 m-20">
+    <div class="flex gap-2 space-y-2">
       <InputText v-model="input" placeholder="What do you do?" class="flex-1" />
       <Button type="submit" label="Send" />
     </div>
-    <div v-if="options?.length" class="flex flex-wrap gap-2">
-    <div class="space-y-4"  v-for="(option, idx) in options" :key="idx" >
-      <Button
-        @click="$emit('submit', option)"
-        :label="option"
-        class="p-button-sm p-button-outlined space-y-4" 
-      />
+      <div v-if="options?.length" class="w-full space-y-2">
+        <p>.. or choose: </p>
+        <div v-for="(option, idx) in options" :key="idx">
+          <Button
+            @click="$emit('submit', option)"
+            :label="option"
+            class="p-button-sm p-button-outlined w-full"
+          />
+        </div>
       </div>
-    </div>
   </form>
 </template>
 

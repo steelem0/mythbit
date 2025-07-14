@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-4xl mx-auto space-y-6">
-    <section class="bg-gray-800 p-6 rounded-lg shadow">
+    <section class="bg-gray-800 p-6 rounded-lg shadow text-white">
       <h2 class="text-xl font-semibold mb-4">Welcome to Mythbit</h2>
       <p class="text-gray-300">Choose your hero and begin your AI-guided journey through a land of dice and destiny.</p>
     </section>
@@ -8,21 +8,18 @@
     <section class="bg-gray-800 p-6 rounded-lg shadow">
       <h3 class="text-lg font-semibold mb-4">Begin Your Adventure</h3>
       <div class="flex flex-col md:flex-row gap-4">
-        <PrimeDropdown v-model="selectedClass" :options="classes" optionLabel="name" placeholder="Select Class" class="w-full md:w-1/2 mx-4" />
+        <PrimeDropdown v-model="selectedClass" :options="classes" optionLabel="name" placeholder="Select Class" class="w-full md:w-1/2"   :class="{ 'p-invalid': errors.class }" />
         &nbsp;
-        <PrimeDropdown v-model="selectedRace" :options="races" optionLabel="name" placeholder="Select Race" class="w-full md:w-1/2 mx-4" />
+        <PrimeDropdown  v-model="selectedRace" :options="races" optionLabel="name" placeholder="Select Race" class="w-full md:w-1/2"   :class="{ 'p-invalid': errors.class }" />
         &nbsp;
-         <PrimeButton label="Start Game" @click="startGame" />
-      </div>
-      <div class="mt-4 w-full" style="margin-top: 10px;">
         <PrimeInputText
-        v-model="playerName"
-        placeholder="Enter your name"
-        class="w-full md:w-1/2 mb-4"
-      />
+          v-model="playerName"
+          placeholder="Enter your name"
+          class="w-full md:w-1/2 mb-4"
+        />
+
+         <PrimeButton class="w-full md:w-1/2 mt-4" label="Start Game" @click="startGame" />
       </div>
-
-
     </section>
   </div>
 </template>
@@ -44,18 +41,28 @@ const selectedRace = ref(null)
 const { classes, races, getClasses, getRaces } = useDndApi()
 const playerName = ref('')
 
+const errors = ref({
+  class: false,
+  race: false,
+})
+
+
 onMounted(() => {
   getClasses()
   getRaces()
 })
 
 function startGame() {
-  if (playerName.value && selectedClass.value && selectedRace.value) {
-    player.value.name = playerName.value
-    player.value.class = selectedClass.value
-    player.value.race = selectedRace.value
-    router.push('/play')
+  errors.value.class = !selectedClass.value
+  errors.value.race = !selectedRace.value
+
+  if (errors.value.class || errors.value.race) {
+    return 
   }
+
+  player.value.class = selectedClass.value
+  player.value.race = selectedRace.value
+  router.push('/play')
 }
 
 </script>

@@ -2,7 +2,7 @@
   <div class="py-10 max-w-4xl mx-auto space-y-6 text-white font-serif">
     <!-- Header -->
     <section class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700">
-      <h2 class="text-3xl font-bold mb-3 text-amber-400">
+      <h2 class="text-3xl font-bold mb-3 text-white-400">
         Adventure Awaits, {{ player.name }}
       </h2>
       <p>
@@ -26,7 +26,7 @@
       />
 
       <div v-else class="text-center space-y-4">
-        <p class="text-lg text-amber-300">Your tale has come to an end.</p>
+        <p class="text-lg text-white-300">Your tale has come to an end.</p>
         <Button
           v-if="isGameOver"
           @click="startNewGame"
@@ -100,8 +100,5 @@
     }
   }
 
-  watch(options, (val) => {
-    console.log('Updated options:', val)
-  })
 </script>
 

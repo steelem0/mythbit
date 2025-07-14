@@ -1,0 +1,20 @@
+server {
+    listen 80;
+    server_name portfolio.marcysteele.com;
+
+    # Root splash page
+    location = / {
+        root /var/www/portfolio-root;
+        index index.html;
+    }
+
+    # Nuxt app at /mythbit
+    location /mythbit/ {
+        proxy_pass http://localhost:3001/mythbit/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # Add other apps here (arena, tavern, etc.)
+}

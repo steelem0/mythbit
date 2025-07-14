@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   app:{
     baseURL: '/mythbit/'
   },
+    modules: ['@nuxt/ui'],
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   ssr: true,
@@ -23,9 +24,10 @@ export default defineNuxtConfig({
       }
     },
     nitro: {
+      port: 3001,
+      preset: 'node-server',
       externals:{
         allow: ['https']
-      },
-      preset: 'node' 
+      }
     }
 })
