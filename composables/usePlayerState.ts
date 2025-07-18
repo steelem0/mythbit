@@ -8,6 +8,11 @@ const player = useStorage('mythbit-player', {
 })
 
 export function usePlayerState() {
+
+  const clearPlayer = () => {
+    player.value = { class: null, race: null }
+  }
+
   const setPlayer = (data: { class: any, race: any }) => {
     player.value = {
       class: data.class,
@@ -15,13 +20,14 @@ export function usePlayerState() {
     }
   }
 
-  const clearPlayer = () => {
-    player.value = { class: null, race: null }
+  const getPlayer = () => {
+   return player.value;
   }
 
   return {
     player,
     setPlayer,
+    getPlayer,
     clearPlayer
   }
 }

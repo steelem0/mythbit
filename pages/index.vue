@@ -34,7 +34,7 @@ import { useDndApi } from '~/server/utils/useDndApi'
 import { usePlayerState } from '@/composables/usePlayerState'
 
 const router = useRouter()
-const { player } = usePlayerState()
+const { player, clearPlayer } = usePlayerState()
 
 const selectedClass = ref(null)
 const selectedRace = ref(null)
@@ -48,6 +48,7 @@ const errors = ref({
 
 
 onMounted(() => {
+  clearPlayer()
   getClasses()
   getRaces()
 })
@@ -62,6 +63,7 @@ function startGame() {
 
   player.value.class = selectedClass.value
   player.value.race = selectedRace.value
+  player.value.name = playerName.value || 'Unnamed Hero';
   router.push('/play')
 }
 
